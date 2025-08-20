@@ -53,13 +53,20 @@ public class Graph {
     public void printGraph(){
         for(int nodeId : adjacencyList.keySet()) {
             Node node = nodes.get(nodeId);
-            System.out.println(node.getName() + " connects to:");
+            System.out.println(node.getName() + " (" + node.getId() + ") connects to:");
             for (Edge edge : adjacencyList.get(nodeId)) {
-                edge.getEffectiveTime();
-                System.out.println(" -> " + nodes.get(edge.getToId()).getName() +
-                                   " (distance: " + edge.getDistance() +
-                                   ", time: " + edge.getEffectiveTime() + ")");
-            }
+            Node toNode = nodes.get(edge.getToId());
+            String roadInfo = String.format("  -> %s (%d) [Distance: %.1f m, BaseTime: %.1f min, TrafficFactor: %.1f, EffectiveTime: %.1f min]",
+                    toNode.getName(),
+                    toNode.getId(),
+                    edge.getDistance(),
+                    edge.getBaseTime(),
+                    edge.getTrafficFactor(),
+                    edge.getBaseTime() * edge.getTrafficFactor());
+
+            System.out.println(roadInfo);
         }
+        System.out.println(); // blank line between nodes
+    }
     }
 }
