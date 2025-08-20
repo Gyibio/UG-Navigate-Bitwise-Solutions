@@ -55,9 +55,14 @@ public class Edge {
                 ", trafficFactor=" + trafficFactor +
                 '}';
     }
-    public double getEffectiveTime() {
-    return baseTime * trafficFactor;
-}
+    public double getEffectiveTime(int hour) {
+        double timeFactor = trafficFactor;
+        // Simulate higher traffic during 7-9am and 4-6pm
+        if ((hour >= 7 && hour <= 9) || (hour >= 16 && hour <= 18)) {
+            timeFactor *= 1.5;
+        }
+        return baseTime * timeFactor;
+    }
 
 
 }
