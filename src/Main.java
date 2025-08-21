@@ -1,24 +1,45 @@
-import model.Edge;
+
+import java.util.List;
+import java.util.Scanner;
+
+import algorithms.Dijkstra;
+import io.FileInputHelper;
 import model.Graph;
 import model.Node;
 
 public class Main {
     public static void main(String[] args) {
-        Graph graph = new Graph();
+           // Adjust file paths as needed
+        String nodesFile = "C:\\Users\\royad\\Desktop\\UG-Navigate-Bitwise-Solutions\\data\\n" + //
+                        "odes.txt";
+        String edgesFile = "C:\\Users\\royad\\Desktop\\UG-Navigate-Bitwise-Solutions\\data\\edges.txt";
 
-        Node node1 = new Node(1, "Balme Library");
-        Node node2 = new Node(2, "Engineering School");
-        Node node3 = new Node(3, "Maths Department");
+        Graph graph = FileInputHelper.loadGraph(nodesFile, edgesFile);
 
-        graph.addNode(node1);
-        graph.addNode(node2);
-        graph.addNode(node3);
+        // System.out.println("Graph Loaded");
+        // System.out.println("Nodes count: " + graph.getNodes().size());
+        // System.out.println("Edges count: " + graph.getEdges().size());
 
-        graph.addEdge(new Edge(1, 2, 200, 10, 1.0), true);
-        graph.addEdge(new Edge(2, 3, 150, 8, 1.2), true);
-        graph.addEdge(new Edge(1, 3, 300, 15, 0.9), false);
+        // graph.printGraph();
+        // Choose start and end
+Scanner sc = new Scanner(System.in);
+System.out.print("Enter start node ID: ");
+int start = sc.nextInt();
+System.out.print("Enter destination node ID: ");
+int end = sc.nextInt();
+System.out.print("Optimize by (1) Distance or (2) Time: ");
+int opt = sc.nextInt();
 
+boolean useTime = (opt == 2);
 
-        graph.printGraph();
+// Run Dijkstra
+List<Node> path = Dijkstra.findShortestPath(graph, start, end, useTime);
+
+// Print results
+System.out.println("Shortest Path:");
+for (Node n : path) {
+    System.out.print(n.getName() + " -> ");
+}
+System.out.println("END");
     }
 }

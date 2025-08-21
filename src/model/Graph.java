@@ -48,6 +48,14 @@ public class Graph {
     public List<Edge> getNeighbors(int nodeId) {
         return adjacencyList.getOrDefault(nodeId, new ArrayList<>());
     }
+    // Get all edges in the graph
+    public List<Edge> getEdges() {
+        List<Edge> allEdges = new ArrayList<>();
+        for (List<Edge> edges : adjacencyList.values()) {
+            allEdges.addAll(edges);
+    }
+        return allEdges;
+    }
 
     //Debugging: print graph
     public void printGraph(){
