@@ -5,28 +5,31 @@ import model.Node;
 import model.Edge;
 import model.Dijkstra;
 
-import java.util.Scanner;
+import java.util.*;
+import java.io.*;
 
 public class UGNavigate {
     public static void main(String[] args) {
         Graph campusGraph = new Graph();
+        List<Node> allNodes = new ArrayList<>();
+        // Load nodes from file
+        try (BufferedReader br = new BufferedReader(new FileReader("data/nodes.text"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", 2);
+                if (parts.length == 2) {
+                    int id = Integer.parseInt(parts[0].trim());
+                    String name = parts[1].trim();
+                    Node node = new Node(id, name);
+                    campusGraph.addNode(node);
+                    allNodes.add(node);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading nodes: " + e.getMessage());
+        }
 
-        // Create nodes (buildings/landmarks)
-        Node library = new Node(1, "Library");
-        Node cafeteria = new Node(2, "Cafeteria");
-        Node lectureHall = new Node(3, "Lecture Hall");
-        Node adminBlock = new Node(4, "Admin Block");
-
-        // Add nodes
-        campusGraph.addNode(library);
-        campusGraph.addNode(cafeteria);
-        campusGraph.addNode(lectureHall);
-        campusGraph.addNode(adminBlock);
-
-        // Add edges (roads/paths: fromId, toId, distance, baseTime, trafficFactor)
-        campusGraph.addEdge(new Edge(1, 2, 100, 2, 1.0), true); // Library <-> Cafeteria
-        campusGraph.addEdge(new Edge(2, 3, 150, 3, 1.2), true); // Cafeteria <-> Lecture Hall
-        campusGraph.addEdge(new Edge(1, 4, 200, 4, 0.9), true); // Library <-> Admin Block
+    // TODO: Load edges from file or add manually as needed
 
         // Interactive Menu
         Scanner scanner = new Scanner(System.in);
@@ -65,18 +68,21 @@ public class UGNavigate {
                     break;
 
                 case 3:
-                    System.out.print("Enter start building ID: ");
-                    int startId = scanner.nextInt();
-                    System.out.print("Enter destination building ID: ");
-                    int destId = scanner.nextInt();
+                    System.out.print("Enter start building name: ");
+                    String startName = scanner.nextLine().trim();
+                    System.out.print("Enter destination building name: ");
+                    String destName = scanner.nextLine().trim();
 
-                    Node start = campusGraph.getNodeById(startId);
-                    Node dest = campusGraph.getNodeById(destId);
+                    Node start = null, dest = null;
+                    for (Node node : allNodes) {
+                        if (node.getName().equalsIgnoreCase(startName)) start = node;
+                        if (node.getName().equalsIgnoreCase(destName)) dest = node;
+                    }
 
                     if (start == null || dest == null) {
-                        System.out.println("Invalid building IDs!");
+                        System.out.println("Invalid building names!");
                     } else {
-                        Dijkstra.PathResult result = Dijkstra.shortestPath(campusGraph, startId, destId);
+                        Dijkstra.PathResult result = Dijkstra.shortestPath(campusGraph, start.getId(), dest.getId());
 
                         System.out.println("\nShortest path from " + start.getName() + " to " + dest.getName() + ":");
                         for (Node node : result.getPath()) {
